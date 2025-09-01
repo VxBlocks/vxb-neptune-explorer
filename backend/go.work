@@ -1,0 +1,14 @@
+go 1.24.0
+
+use (
+	./app
+	./fetcher/fetcher
+	./pkg/config
+	./pkg/fetch
+	./pkg/logger
+	./pkg/models
+	./pkg/redis
+	./pkg/rpc_client
+	./pkg/timescale
+	./pkg/trace
+)

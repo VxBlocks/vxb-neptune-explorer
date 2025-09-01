@@ -1,0 +1,847 @@
+openapi: 3.0.1
+info:
+  title: neptune
+  description: ''
+  version: 1.0.0
+tags: []
+paths:
+  /trend/target:
+    get:
+      summary: NetworkTargetTrend
+      deprecated: false
+      description: network proving target trend by day
+      tags: []
+      parameters:
+        - name: duration
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+            enum:
+              - all
+              - month
+              - week
+              - day
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  chart:
+                    type: array
+                    items: &ref_0
+                      $ref: '#/components/schemas/chart.Point'
+                required:
+                  - success
+                  - chart
+          headers: {}
+      security: []
+  /trend/fee:
+    get:
+      summary: NetworkFeeRewardTrend
+      deprecated: false
+      description: network fee reward trend by day
+      tags: []
+      parameters:
+        - name: duration
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+            enum:
+              - all
+              - month
+              - week
+              - day
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  chart:
+                    type: array
+                    items: *ref_0
+                required:
+                  - success
+                  - chart
+          headers: {}
+      security: []
+  /trend/reward:
+    get:
+      summary: NetworkRewardTrend
+      deprecated: false
+      description: ''
+      tags: []
+      parameters:
+        - name: duration
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
+            enum:
+              - all
+              - month
+              - week
+              - day
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  chart:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/chart.RewardPoint'
+                required:
+                  - success
+                  - chart
+          headers: {}
+      security: []
+  /utxo/list:
+    get:
+      summary: utxolist
+      deprecated: false
+      description: ''
+      tags: []
+      parameters:
+        - name: page
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    format: int64
+                  success:
+                    type: boolean
+                  utxos:
+                    type: array
+                    items:
+                      properties:
+                        id:
+                          type: integer
+                          description: ID
+                          format: int64
+                        digest:
+                          type: string
+                      required:
+                        - id
+                        - digest
+                      $ref: '#/components/schemas/UtxoDigest'
+                required:
+                  - count
+                  - success
+                  - utxos
+          headers: {}
+      security: []
+  /block/mempool:
+    get:
+      summary: WatchMempool
+      deprecated: false
+      description: ''
+      tags: []
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            text/event-stream:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                required:
+                  - success
+          headers: {}
+      security: []
+  /tx/list:
+    get:
+      summary: transactions
+      deprecated: false
+      description: list all mempool transactions
+      tags: []
+      parameters:
+        - name: page
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  count:
+                    type: integer
+                    format: int64
+                  txs:
+                    type: array
+                    items: &ref_1
+                      $ref: '#/components/schemas/transactionListItem'
+                required:
+                  - success
+                  - txs
+                  - count
+          headers: {}
+      security: []
+  /tx/{txid}:
+    get:
+      summary: getTransaction
+      deprecated: false
+      description: ''
+      tags: []
+      parameters:
+        - name: txid
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  tx:
+                    $ref: '#/components/schemas/transaction'
+                required:
+                  - success
+                  - tx
+          headers: {}
+      security: []
+  /transaction/by_height/{height}:
+    get:
+      summary: transactionsByheight
+      deprecated: false
+      description: ''
+      tags: []
+      parameters:
+        - name: height
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  txs:
+                    type: array
+                    items: *ref_1
+                required:
+                  - success
+                  - txs
+          headers: {}
+      security: []
+  /blocks:
+    get:
+      summary: Blocks
+      deprecated: false
+      description: ''
+      tags: []
+      parameters:
+        - name: page
+          in: query
+          description: ''
+          required: true
+          example: 1
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          description: ''
+          required: true
+          example: 5
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  count:
+                    type: integer
+                    format: int64
+                  message:
+                    type: string
+                  blocks:
+                    type: array
+                    items: &ref_2
+                      $ref: '#/components/schemas/blockitem'
+                required:
+                  - count
+                  - message
+                  - blocks
+                  - success
+          headers: {}
+      security: []
+  /forks:
+    get:
+      summary: Forks
+      deprecated: false
+      description: ''
+      tags: []
+      parameters:
+        - name: page
+          in: query
+          description: ''
+          required: true
+          example: 1
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          description: ''
+          required: true
+          example: 5
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  count:
+                    type: integer
+                    format: int64
+                  message:
+                    type: string
+                  blocks:
+                    type: array
+                    items: *ref_2
+                required:
+                  - count
+                  - message
+                  - blocks
+                  - success
+          headers: {}
+      security: []
+  /block/{height}:
+    get:
+      summary: Block Detail
+      deprecated: false
+      description: ''
+      tags: []
+      parameters:
+        - name: height
+          in: path
+          description: ''
+          required: true
+          example: 33
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                  detail:
+                    $ref: '#/components/schemas/blockcommon'
+                required:
+                  - success
+                  - message
+                  - detail
+              example:
+                success: true
+                count: 1
+                message: ''
+                detail:
+                  common:
+                    block: 3383
+                    block_hash: >-
+                      f9af4dadfce531edac4faeeea287eaf447f5a3b5eaf336fc02d9a1d93976dcefb781030000000000
+                    time: '2025-02-24T16:45:34.134+08:00'
+                    target: '19618209078016'
+                    block_coinbase_reward: 128
+                    block_gas: 0
+                    network: 0
+                  expand:
+                    inputs: 0
+                    outputs: 2
+                    sibling_blocks:
+                      - >-
+                        3eeaed3acdd8765b9a3e689d74f745365d6a3de57fb4a9a19c46ac432ce419a92fb82d47dc0d3f54
+                      - >-
+                        3eeaed3acdd8765b9a3e689d74f745365d6a3de57fb4a9a19c46ac432ce419a92fb82d47dc0d3f54
+                    cumulative_proof_of_work: 0
+          headers: {}
+      security: []
+  /rpc/block/{height_or_hash}:
+    get:
+      summary: rpc.getBlock
+      deprecated: false
+      description: ''
+      tags: []
+      parameters:
+        - name: height_or_hash
+          in: path
+          description: ''
+          required: true
+          example: '1'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security: []
+  /block/event:
+    get:
+      summary: WatchBlock
+      deprecated: false
+      description: ''
+      tags: []
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            text/event-stream:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                required:
+                  - success
+              example: >-
+                event: blocks
+
+                data:
+                {"height":5032,"timestamp":"2025-03-17T03:27:17.037Z","inputs":0,"outputs":2}
+          headers: {}
+      security: []
+  /rpc/pow_puzzle:
+    get:
+      summary: rpcGetPuzzle
+      deprecated: false
+      description: ''
+      tags: []
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            '*/*':
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security: []
+  /overview:
+    get:
+      summary: Network Overview
+      deprecated: false
+      description: ''
+      tags: []
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  overview:
+                    properties:
+                      height:
+                        type: integer
+                        format: int64
+                      block_hash:
+                        type: string
+                      timestamp:
+                        type: string
+                      proof_target:
+                        type: string
+                      total_reward:
+                        type: string
+                    required:
+                      - height
+                      - block_hash
+                      - timestamp
+                      - proof_target
+                      - total_reward
+                    $ref: '#/components/schemas/overview'
+                required:
+                  - success
+                  - message
+                  - overview
+              example:
+                success: true
+                message: ''
+                overview:
+                  height: 3382
+                  block_hash: >-
+                    986c5f7e111a32d7bffd8e4440e543b5706df3bf404243cd5a43c929069d29e27ebb040000000000
+                  timestamp: '2025-03-06T09:35:23.429+08:00'
+                  proof_target: 23552949567991
+                  total_reward: 128128128
+          headers: {}
+      security: []
+  /swagger.json:
+    get:
+      summary: swagger.json
+      deprecated: false
+      description: ''
+      tags: []
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            '*/*':
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security: []
+  /search:
+    get:
+      summary: search
+      deprecated: false
+      description: ''
+      tags: []
+      parameters:
+        - name: q
+          in: query
+          description: ''
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  block: *ref_2
+                  transaction: *ref_1
+                  input: &ref_3
+                    $ref: '#/components/schemas/txo'
+                  output: *ref_3
+          headers: {}
+      security: []
+components:
+  schemas:
+    blockitem:
+      type: object
+      properties:
+        block:
+          type: integer
+          format: int64
+        block_hash:
+          type: string
+        time:
+          type: string
+          format: date-time
+        proof_target:
+          type: string
+        coinbase_reward:
+          type: string
+        inputs:
+          type: integer
+        outputs:
+          type: integer
+        fee:
+          type: string
+      required:
+        - block
+        - block_hash
+        - proof_target
+        - coinbase_reward
+        - inputs
+        - outputs
+        - time
+        - fee
+    chart.Point:
+      type: object
+      properties:
+        height:
+          type: integer
+          format: int64
+        interv:
+          type: string
+          format: date-time
+        value:
+          type: number
+          format: double
+      required:
+        - interv
+        - value
+    blockcommon:
+      type: object
+      properties:
+        block:
+          type: integer
+          format: int64
+        block_hash:
+          type: string
+        time:
+          type: string
+          format: date-time
+        target:
+          type: string
+        block_coinbase_reward:
+          type: string
+        block_gas:
+          type: string
+        is_canonical:
+          type: boolean
+      required:
+        - block
+        - block_hash
+        - time
+        - target
+        - block_coinbase_reward
+        - block_gas
+        - is_canonical
+    overview:
+      type: object
+      properties:
+        height:
+          type: integer
+          format: int64
+        block_hash:
+          type: string
+        timestamp:
+          type: string
+        proof_target:
+          type: string
+        total_reward:
+          type: string
+        total_fee:
+          type: string
+        network_speed_24h:
+          type: string
+        average_block_time:
+          type: number
+        utxo_count:
+          type: integer
+          format: int64
+        day_reward:
+          type: string
+        day_fee:
+          type: string
+        cumulative_proof_of_work:
+          type: string
+        tx_count:
+          type: integer
+          format: int64
+      required:
+        - height
+        - block_hash
+        - timestamp
+        - proof_target
+        - total_reward
+        - average_block_time
+        - utxo_count
+        - day_reward
+        - cumulative_proof_of_work
+        - total_fee
+        - tx_count
+        - network_speed_24h
+        - day_fee
+    UtxoDigest:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        digest:
+          type: string
+      required:
+        - id
+        - digest
+    transaction:
+      type: object
+      properties:
+        id:
+          type: string
+        proof_type:
+          type: string
+        num_inputs:
+          type: integer
+        num_outputs:
+          type: integer
+        fee:
+          type: string
+        time:
+          type: string
+          format: date-time
+        height:
+          type: integer
+          format: int64
+        inputs:
+          type: array
+          items:
+            type: string
+        outputs:
+          type: array
+          items:
+            type: string
+      required:
+        - id
+        - proof_type
+        - num_inputs
+        - num_outputs
+        - fee
+        - time
+        - height
+        - inputs
+        - outputs
+    transactionListItem:
+      type: object
+      properties:
+        id:
+          type: string
+        proof_type:
+          type: string
+        num_inputs:
+          type: integer
+        num_outputs:
+          type: integer
+        fee:
+          type: string
+        time:
+          type: string
+          format: date-time
+        height:
+          type: integer
+          format: int64
+      required:
+        - id
+        - proof_type
+        - num_inputs
+        - num_outputs
+        - fee
+        - time
+        - height
+    txo:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID
+        height:
+          type: integer
+          format: int64
+        txid:
+          type: string
+      required:
+        - id
+        - height
+        - txid
+    chart.RewardPoint:
+      type: object
+      properties:
+        height:
+          type: integer
+          format: int64
+        interv:
+          type: string
+          format: date-time
+        value:
+          type: number
+          format: double
+        fee:
+          type: number
+          format: double
+      required:
+        - interv
+        - value
+        - fee
+  securitySchemes: {}
+servers: []
+security: []

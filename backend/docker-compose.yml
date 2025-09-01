@@ -1,0 +1,73 @@
+services:
+  fetcher:
+    restart: always
+    pull_policy: always
+    image: ${DOCKER_REPO}/fetcher:${NETWORK}
+    depends_on:
+      timescale:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      REDIS_URI: redis:6379
+      POSTGRES_URL: timescale
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DBNAME: ${POSTGRES_DBNAME}
+      NEPTUNE_RPC: ${NEPTUNE_RPC}
+
+  api:
+    restart: always
+    pull_policy: always
+    image: ${DOCKER_REPO}/api:${NETWORK}
+    depends_on:
+      timescale:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - ${API_PORT}:8080
+    environment:
+      REDIS_URI: redis:6379
+      POSTGRES_URL: timescale
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DBNAME: ${POSTGRES_DBNAME}
+      NEPTUNE_RPC: ${NEPTUNE_RPC}
+
+  timescale:
+    image: timescale/timescaledb:2.17.1-pg17
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=postgres
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - pgpoddata:/var/lib/postgresql/data
+    configs:
+      - source: db.sql
+        target: /docker-entrypoint-initdb.d/db.sql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - ${DB_PORT}:5432
+
+  redis:
+    image: redis
+    restart: always
+
+volumes:
+  pgpoddata:
+
+configs:
+  db.sql:
+    content: |
+      CREATE DATABASE ${POSTGRES_DBNAME} WITH OWNER postgres;
+
+      CREATE EXTENSION IF NOT EXISTS timescaledb;
+      CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;

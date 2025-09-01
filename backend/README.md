@@ -1,0 +1,37 @@
+# neptune-explorer-backend
+
+## install
+
+### build
+
+```bash
+task build-fetcher
+task build-api
+```
+
+### configure .env
+
+```bash
+vim .env
+
+NETWORK=mainnet
+DOCKER_REPO=ghcr.io/vxblocks/neptune-explorer-backend
+
+DB_PORT=5432
+API_PORT=3000
+REDIS_PORT=6379
+
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=5wterftdguhe56
+POSTGRES_DBNAME=nepton
+POSTGRES_PORT=5432
+POSTGRES_URL=127.0.0.1ls
+
+NEPTUNE_RPC=http://127.0.0.1:9800
+```
+
+### run docker
+
+```bash
+docker compose up -d
+```

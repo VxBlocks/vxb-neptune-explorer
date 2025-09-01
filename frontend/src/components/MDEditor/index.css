@@ -1,0 +1,8 @@
+.rcmd {
+    border: none;
+    background: transparent !important;
+}
+
+.rc-md-editor .editor-container>.section {
+    border: none !important;
+}

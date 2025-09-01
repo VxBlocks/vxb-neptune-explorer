@@ -1,0 +1,8 @@
+.block_result {
+    padding: 8px 16px;
+    cursor: pointer;
+} 
+.block_result:hover {  
+    cursor: pointer;
+    background-color: #EBF8FF;
+} 

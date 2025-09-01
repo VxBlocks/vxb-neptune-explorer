@@ -1,0 +1,65 @@
+version: "3"
+
+vars:
+  DOCKER_REGISTRY: ghcr.io/vxblocks/neptune-explorer-backend
+  GIT_REPO: https://github.com/VxBlocks/zulu-explorer_backend
+dotenv:
+  - ".env"
+interval: "500ms"
+
+tasks:
+  build-fetcher:
+    cmd:
+      task: build-docker
+      vars:
+        docker_tag: "{{.DOCKER_REGISTRY}}/fetcher:{{.NETWORK}}"
+        dockerfile: "dockerfiles/fetcher.dockerfile"
+
+  build-api:
+    cmd:
+      task: build-docker
+      vars:
+        docker_tag: "{{.DOCKER_REGISTRY}}/api:{{.NETWORK}}"
+        dockerfile: "dockerfiles/api.dockerfile"
+
+  build-docker:
+    dir: "{{.DIR}}"
+    vars:
+      SOURCE: "{{.GIT_REPO}}"
+      DOC: null
+    cmds:
+      - docker build -t {{.docker_tag}}
+        {{if .dockerfile}} -f {{.dockerfile}} {{end}}
+        {{range .build_arg}} --build-arg {{.}} {{end}}
+        {{if .SOURCE}} --label org.opencontainers.image.source={{.SOURCE}} {{end}}
+        {{if .DOC}} --label org.opencontainers.image.documentation={{.DOC}} {{end}}
+        .
+      - docker push {{.docker_tag}}
+
+  run-fetcher:
+    cmd: go run fetcher
+
+  delete-data:
+    cmd: go run fetcher drop
+
+  build-api-go:
+    dir: app
+    sources:
+      - "**/*.go"
+    cmds:
+      - go build -o ./tmp/main main.go
+    generates:
+      - ./tmp/main
+
+  run-api:
+    watch: true
+    dir: app
+    deps: [build-api-go]
+    cmd: ./tmp/main
+
+  start-test:
+    cmd: docker compose -f test.docker-compose.yml up -d
+
+  gen:
+    dir: app
+    cmd: go generate
