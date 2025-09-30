@@ -6,6 +6,8 @@ export const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'wss://neptune.vxb.ai/ap
 
 export const SWAGGER_URL = process.env.NEXT_PUBLIC_SWAGGER_URL || 'https://neptune.vxb.ai/api/swagger.json'
 
+export const GITHUB_URL = process.env.NEXT_PUBLIC_GITHUB_URL || 'https://github.com/VxBlocks/vxb-neptune-explorer'
+
 
 export const NEPTUNE_TOKEMOCIS_NOTISTICE = `
 Neptune's tokenomics share similarities with Bitcoin but have key distinctions:
